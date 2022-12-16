@@ -8,6 +8,8 @@
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 
+#include "esp_log.h"
+
 #include "bluetooth.hpp"
 #include "display.hpp"
 #include "motors.hpp"
@@ -94,11 +96,19 @@ static void vTaskDisplay(void *pvParameters) {
                     break;
             }
         }
+
+        printf("\033[H\033[J");
+        printf("REFERENCE: %f\n", fGetReferenceAngle());
+        printf("SENSOR: %d\n", xGetCurrentSensor());
+        printf("MODE: %d\n", xGetCurrentMode());
+        printf("P: %f\n", fGetPidThermP());
+        printf("I: %f\n", fGetPidThermI());
+        printf("D: %f\n", fGetPidThermD());
+
         vEraseDisplayCells(0, 11, 15);
         vSetDisplayCursor(0, 11);
 
-        // float angle = fGetCurrentAngle();
-        float angle = fGetReferenceAngle();
+        float angle = fGetCurrentAngle();
         sprintf(angleString, "%.1f", angle);
         if(angle > 0) {
             vDisplayWriteChar('+');

@@ -46,7 +46,6 @@ void vInitUltrasonicSensor(void) {
 }
 
 float fReadAccelerometerSensor(void) {
-     // float ax = accelerometer.getAccX();
      float ay = accelerometer.getAccY();
      float az = accelerometer.getAccZ();
      return (currentAngle = atan(ay/az)*ACCELEROMETER_RADIAN_TO_DEGREES);
@@ -57,6 +56,5 @@ float fReadUltrasonicSensor(void) {
      float distance_sensor_left = 0;
      ultrasonic_measure(&sensor_right, ULTRASONIC_MAX_DISTANCE_CM, &distance_sensor_right);
      ultrasonic_measure(&sensor_left, ULTRASONIC_MAX_DISTANCE_CM, &distance_sensor_left);
-     // ESP_LOGI("SENSOR", "Distance left: %f", distance_sensor_left);
      return (currentAngle = asin((distance_sensor_left - distance_sensor_right)/ULTRASONIC_BAR_LENGTH)*ACCELEROMETER_RADIAN_TO_DEGREES);
 }
