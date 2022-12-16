@@ -10,15 +10,12 @@
 
 #include <cmath>
 #include "sensors.hpp"
+#include "system.hpp"
 #include <iostream>
 
 
 #define ACCELEROMETER_DEGREES_TO_RADIAN M_PI/180
 
-#define Kd                              100
-// #define Kd                              79.52
-#define Ki                              0.01
-#define Kp                              126
 #define X                               0.0425
 #define Ts                              0.05
 #define Ct                              2.3134
@@ -69,12 +66,11 @@ void vAdjustMotors(void) {
 
      if (angle > -14 && angle < 14) {
 
-
           ERROR_CONTROL = REF_ANGLE - angle;
           if(abs(ERROR_CONTROL) > 2) {
                ERROR_CONTROL = ERROR_CONTROL * ACCELEROMETER_DEGREES_TO_RADIAN;
-
-               float OUT_CONTROL = ERROR_CONTROL * (Kp +Ki*(Ts/2)) + ERROR_CONTROL_PAST1 * (-Kp+Ki*(Ts/2)-2*Kd*(1/Ts)) + ERROR_CONTROL_PAST2 * (Kd*(1/Ts)) - OUT_CONTROL_PAST1 * (-1);
+               
+               float OUT_CONTROL = ERROR_CONTROL * (fGetPidThermP() +fGetPidThermI()*(Ts/2)) + ERROR_CONTROL_PAST1 * (-fGetPidThermP()+fGetPidThermI()*(Ts/2)-2*fGetPidThermD()*(1/Ts)) + ERROR_CONTROL_PAST2 * (fGetPidThermD()*(1/Ts)) - OUT_CONTROL_PAST1 * (-1);
                float pwm = mcpwm_get_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
                float out_control_ct = (OUT_CONTROL * Ct * 3.6)/10000;
                ESP_LOGI("OUT_PWM1", "%.2f", out_control_ct);

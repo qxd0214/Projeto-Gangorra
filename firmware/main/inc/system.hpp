@@ -25,6 +25,15 @@ typedef struct {
      Sensor currentSensor;
 } SystemSettings;
 
+#define SYSTEM_ANGLE_UPPER_LIMIT   14
+#define SYSTEM_ANGLE_LOWER_LIMIT   -14
+#define SYSTEM_DEFAULT_P           126.0
+#define SYSTEM_DEFAULT_I           0.01
+#define SYSTEM_DEFAULT_D           100.0
+#define SYSTEM_DEFAULT_ANGLE       0
+#define SYSTEM_DEFAULT_MODE        DISCONNECTED_MODE
+#define SYSTEM_DEFAULT_SENSOR      ULTRASONIC_SENSOR
+
 extern bool bCheckModeUpdate(void);
 
 extern void vComponentsInit(void);

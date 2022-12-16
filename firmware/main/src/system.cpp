@@ -9,15 +9,6 @@
 #include "bluetooth.hpp"
 #include "delay.hpp"
 
-#define SYSTEM_ANGLE_UPPER_LIMIT   14
-#define SYSTEM_ANGLE_LOWER_LIMIT   -14
-#define SYSTEM_DEFAULT_P           1.0
-#define SYSTEM_DEFAULT_I           1.0
-#define SYSTEM_DEFAULT_D           0.0
-#define SYSTEM_DEFAULT_ANGLE       0
-#define SYSTEM_DEFAULT_MODE        DISCONNECTED_MODE
-#define SYSTEM_DEFAULT_SENSOR      ULTRASONIC_SENSOR
-
 static SystemSettings currentSettings;
 static bool modeUpdate;
 

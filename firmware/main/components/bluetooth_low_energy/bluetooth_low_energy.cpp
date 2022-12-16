@@ -19,7 +19,7 @@ static void gatts_profile_p_control_event_handler(esp_gatts_cb_event_t event, es
 static void gatts_profile_i_control_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param);
 static void gatts_profile_d_control_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param);
 static void gatts_profile_mode_control_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param);
-static void gatts_profile_sensor_control_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param);
+// static void gatts_profile_sensor_control_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param);
 
 
 #define SERVICE_P_CONTROL_UUID               0x7477
@@ -187,11 +187,13 @@ static struct gatts_profile_inst gl_profile_tab[PROFILE_NUM] = {
     [PROFILE_MODE_CONTROL_APP_ID] = {
         .gatts_cb = gatts_profile_mode_control_event_handler, /* This demo does not implement, similar as profile A */
         .gatts_if = ESP_GATT_IF_NONE,                      /* Not get the gatt_if, so initial is ESP_GATT_IF_NONE */
-    },
-    [PROFILE_SENSOR_CONTROL_APP_ID] = {
-        .gatts_cb = gatts_profile_sensor_control_event_handler, /* This demo does not implement, similar as profile A */
-        .gatts_if = ESP_GATT_IF_NONE,                      /* Not get the gatt_if, so initial is ESP_GATT_IF_NONE */
     }
+    /*
+    ,[PROFILE_SENSOR_CONTROL_APP_ID] = {
+        .gatts_cb = gatts_profile_sensor_control_event_handler, // This demo does not implement, similar as profile A 
+        .gatts_if = ESP_GATT_IF_NONE,                      // Not get the gatt_if, so initial is ESP_GATT_IF_NONE 
+    }
+    */
 };
 
 typedef struct {
@@ -318,7 +320,7 @@ static void gatts_profile_angle_event_handler(esp_gatts_cb_event_t event, esp_ga
           if (!param->write.is_prep) {
                ESP_LOGI(GATTS_TAG, "GATT_WRITE_EVT, value len %d, value :", param->write.len);
                esp_log_buffer_char("ÂNGULO: ", param->write.value, param->write.len);
-               vSetReferenceAngle(atoff((const char*) param->write.value));
+               vSetReferenceAngle(atoff((const char*)param->write.value));
                if (gl_profile_tab[PROFILE_ANGLE_APP_ID].descr_handle == param->write.handle && param->write.len == 2) {
                     uint16_t descr_value = param->write.value[1] << 8 | param->write.value[0];
                     if (descr_value == 0x0001) {
@@ -450,6 +452,7 @@ static void gatts_profile_angle_event_handler(esp_gatts_cb_event_t event, esp_ga
           break;
      }
      case ESP_GATTS_DISCONNECT_EVT: {
+          vSetReferenceAngle(SYSTEM_DEFAULT_ANGLE);
           ESP_LOGI(GATTS_TAG, "ESP_GATTS_DISCONNECT_EVT, disconnect reason 0x%x", param->disconnect.reason);
           esp_ble_gap_start_advertising(&adv_params);
           break;
@@ -531,7 +534,7 @@ static void gatts_profile_p_control_event_handler(esp_gatts_cb_event_t event, es
           if (!param->write.is_prep) {
                ESP_LOGI(GATTS_TAG, "GATT_WRITE_EVT, value len %d, value :", param->write.len);
                esp_log_buffer_char("Parâmetro P: ", param->write.value, param->write.len);
-               vSetPidThermP(atoff((const char*) param->write.value));
+               vSetPidThermP(atoff((const char*)param->write.value));
                if (gl_profile_tab[PROFILE_P_CONTROL_APP_ID].descr_handle == param->write.handle && param->write.len == 2) {
                     uint16_t descr_value = param->write.value[1] << 8 | param->write.value[0];
                     if (descr_value == 0x0001) {
@@ -659,6 +662,7 @@ static void gatts_profile_p_control_event_handler(esp_gatts_cb_event_t event, es
           break;
      }
      case ESP_GATTS_DISCONNECT_EVT:
+          vSetPidThermP(SYSTEM_DEFAULT_P);
           ESP_LOGI(GATTS_TAG, "ESP_GATTS_DISCONNECT_EVT, disconnect reason 0x%x", param->disconnect.reason);
           esp_ble_gap_start_advertising(&adv_params);
           break;
@@ -732,7 +736,7 @@ static void gatts_profile_i_control_event_handler(esp_gatts_cb_event_t event, es
           if (!param->write.is_prep) {
                ESP_LOGI(GATTS_TAG, "GATT_WRITE_EVT, value len %d, value :", param->write.len);
                esp_log_buffer_char("Parâmetro I: ", param->write.value, param->write.len);
-               vSetPidThermI(atoff((const char*) param->write.value));
+               vSetPidThermI(atoff((const char*)param->write.value));
                if (gl_profile_tab[PROFILE_I_CONTROL_APP_ID].descr_handle == param->write.handle && param->write.len == 2) {
                     uint16_t descr_value = param->write.value[1] << 8 | param->write.value[0];
                     if (descr_value == 0x0001) {
@@ -859,6 +863,7 @@ static void gatts_profile_i_control_event_handler(esp_gatts_cb_event_t event, es
           break;
      }
      case ESP_GATTS_DISCONNECT_EVT:
+          vSetPidThermI(SYSTEM_DEFAULT_I);
           ESP_LOGI(GATTS_TAG, "ESP_GATTS_DISCONNECT_EVT, disconnect reason 0x%x", param->disconnect.reason);
           esp_ble_gap_start_advertising(&adv_params);
           break;
@@ -932,7 +937,7 @@ static void gatts_profile_d_control_event_handler(esp_gatts_cb_event_t event, es
           if (!param->write.is_prep) {
                ESP_LOGI(GATTS_TAG, "GATT_WRITE_EVT, value len %d, value :", param->write.len);
                esp_log_buffer_char("Parâmetro D: ", param->write.value, param->write.len);
-               vSetPidThermD(atoff((const char*) param->write.value));
+               vSetPidThermD(atoff((const char*)param->write.value));
                if (gl_profile_tab[PROFILE_D_CONTROL_APP_ID].descr_handle == param->write.handle && param->write.len == 2) {
                     uint16_t descr_value = param->write.value[1] << 8 | param->write.value[0];
                     if (descr_value == 0x0001) {
@@ -1056,6 +1061,7 @@ static void gatts_profile_d_control_event_handler(esp_gatts_cb_event_t event, es
           break;
      }
      case ESP_GATTS_DISCONNECT_EVT:
+          vSetPidThermD(SYSTEM_DEFAULT_D);
           ESP_LOGI(GATTS_TAG, "ESP_GATTS_DISCONNECT_EVT, disconnect reason 0x%x", param->disconnect.reason);
           esp_ble_gap_start_advertising(&adv_params);
           break;
@@ -1127,9 +1133,23 @@ static void gatts_profile_mode_control_event_handler(esp_gatts_cb_event_t event,
      case ESP_GATTS_WRITE_EVT: {
           ESP_LOGI("MODE TAG", "GATT_WRITE_EVT, conn_id %d, trans_id %d, handle %d", param->write.conn_id, param->write.trans_id, param->write.handle);
           if (!param->write.is_prep) {
+               int selectedOption = atoi((const char*)param->write.value);
+               switch (selectedOption) {
+               case 0:
+                    vSetCurrentSensor(ACCELEROMETER_SENSOR);
+                    break;
+               case 1:
+                    vSetCurrentSensor(ULTRASONIC_SENSOR);
+                    break;
+               case 2:
+                    vSetCurrentMode(FREE_MODE);
+                    break;
+               case 3:
+                    vSetCurrentMode(DEFAULT_MODE);
+                    break;
+               }
                ESP_LOGI("MODE TAG", "GATT_WRITE_EVT, value len %d, value :", param->write.len);
                esp_log_buffer_char("MODE: ", param->write.value, param->write.len);
-               vSetCurrentMode((Mode) atoi((const char*) param->write.value));
                if (gl_profile_tab[PROFILE_MODE_CONTROL_APP_ID].descr_handle == param->write.handle && param->write.len == 2) {
                     uint16_t descr_value = param->write.value[1] << 8 | param->write.value[0];
                     if (descr_value == 0x0001) {
@@ -1238,6 +1258,7 @@ static void gatts_profile_mode_control_event_handler(esp_gatts_cb_event_t event,
      case ESP_GATTS_STOP_EVT:
           break;
      case ESP_GATTS_CONNECT_EVT: {
+          vSetCurrentMode(DEFAULT_MODE);
           esp_ble_conn_update_params_t conn_params;
           memcpy(conn_params.bda, param->connect.remote_bda, sizeof(esp_bd_addr_t));
           // For the IOS system, please reference the apple official documents about the ble connection parameters restrictions.
@@ -1252,12 +1273,12 @@ static void gatts_profile_mode_control_event_handler(esp_gatts_cb_event_t event,
           gl_profile_tab[PROFILE_MODE_CONTROL_APP_ID].conn_id = param->connect.conn_id;
           // start sent the update connection parameters to the peer device.
           esp_ble_gap_update_conn_params(&conn_params);
-          vSetCurrentMode(DEFAULT_MODE);
           break;
      }
      case ESP_GATTS_DISCONNECT_EVT:
+          vSetCurrentMode(SYSTEM_DEFAULT_MODE);
+          vSetCurrentSensor(SYSTEM_DEFAULT_SENSOR);
           ESP_LOGI("MODE TAG", "ESP_GATTS_DISCONNECT_EVT, disconnect reason 0x%x", param->disconnect.reason);
-          vSetCurrentMode(DISCONNECTED_MODE);
           esp_ble_gap_start_advertising(&adv_params);
           break;
      case ESP_GATTS_CONF_EVT: {
@@ -1282,7 +1303,7 @@ static void gatts_profile_mode_control_event_handler(esp_gatts_cb_event_t event,
      }
 }
 
-static void gatts_profile_sensor_control_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
+/* static void gatts_profile_sensor_control_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
      switch (event) {
      case ESP_GATTS_REG_EVT: {
           ESP_LOGI("SENSOR TAG", "REGISTER_APP_EVT_SENSOR_CONTROL, status %d, app_id %d\n", param->reg.status, param->reg.app_id);
@@ -1331,7 +1352,7 @@ static void gatts_profile_sensor_control_event_handler(esp_gatts_cb_event_t even
           if (!param->write.is_prep) {
                ESP_LOGI("SENSOR TAG", "GATT_WRITE_EVT, value len %d, value :", param->write.len);
                esp_log_buffer_char("SENSOR: ", param->write.value, param->write.len);
-               vSetCurrentSensor((Sensor) atoi((const char*) param->write.value));
+               vSetCurrentSensor((Sensor)atoi((const char*)param->write.value));
                if (gl_profile_tab[PROFILE_SENSOR_CONTROL_APP_ID].descr_handle == param->write.handle && param->write.len == 2) {
                     uint16_t descr_value = param->write.value[1] << 8 | param->write.value[0];
                     if (descr_value == 0x0001) {
@@ -1480,8 +1501,8 @@ static void gatts_profile_sensor_control_event_handler(esp_gatts_cb_event_t even
      default:
           break;
      }
-} 
-
+}
+ */
 void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t* param) {
      switch (event) {
      case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT:
