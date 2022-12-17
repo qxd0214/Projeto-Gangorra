@@ -15,18 +15,12 @@ export function BLEProvider({ children }) {
   const [connectedDevice, setConnectedDevice] = useState(null);
 
   async function scanDevices() {
-    showMessage({
-      message: "Procurando por dispositivos...",
-      duration: 3000,
-      type: 'info'
-    });
+  
 
-
-    BLTManager.startDeviceScan(null, null, (error, scannedDevice) => {
+    BLTManager.startDeviceScan(null, null, async (error, scannedDevice) => {
       if (error) {
         showMessage({
           message: "Erro ao escanear dispositivos!",
-          description: "Verifique se o bluetooth e localização está ligado e tente novamente.",
           duration: 5000,
           type: 'danger'
         });
@@ -38,7 +32,7 @@ export function BLEProvider({ children }) {
 
         BLTManager.stopDeviceScan();
 
-        connectDevice(scannedDevice);
+        await connectDevice(scannedDevice);
 
         showMessage({
           message: `Conexão estabelecida com o dispositivo ${scannedDevice.name}!`,

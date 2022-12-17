@@ -23,8 +23,8 @@ export function ControlPanel({ navigation }) {
   } = useBLE()
 
 
-  const [isFreeMode, setIsFreeMode] = useState(true);
-  const [isAccelerometerSensor, setIsAccelerometerSensor] = useState(true);
+  const [isFreeMode, setIsFreeMode] = useState(false);
+  const [isAccelerometerSensor, setIsAccelerometerSensor] = useState(false);
   const [isFirstRender, seIsFirstRender] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
   const [pidValue, setPidValue] = useState({
@@ -34,7 +34,7 @@ export function ControlPanel({ navigation }) {
   });
 
   useEffect(() => {
-    if (isFreeMode) {
+     if (isFreeMode) {
       showMessage({
         message: "Modo livre selecionado!",
         description: "Agora você pode controlar os ganhos do controlador PID e o ângulo de inclinação.",
@@ -49,7 +49,7 @@ export function ControlPanel({ navigation }) {
       });
     } else {
       seIsFirstRender(true);
-    }
+    } 
 
   }, [isFreeMode]);
 
@@ -71,7 +71,7 @@ export function ControlPanel({ navigation }) {
       seIsFirstRender(true);
     }
 
-  }, [isFreeMode]);
+  }, [isAccelerometerSensor]);
 
   useEffect(() => {
     if(!isConnected) navigation.navigate('Home');
@@ -82,7 +82,7 @@ export function ControlPanel({ navigation }) {
 
       let isSuccess;
 
-      if(isAccelerometer){
+      if(isAccelerometerSensor){
         isSuccess = await writeCharacteristicSelectModeAndSensorValue(ULTRASONIC_SENSOR_ID);
       }else {
         isSuccess = await writeCharacteristicSelectModeAndSensorValue(ACCELEROMETER_SENSOR_ID);
