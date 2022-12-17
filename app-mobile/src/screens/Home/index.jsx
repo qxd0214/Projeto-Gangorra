@@ -4,6 +4,7 @@ import { showMessage } from "react-native-flash-message";
 import logo from '../../assets/images/logo.png'
 import { useBLE } from '../../hooks/useBLE';
 import { useEffect } from 'react';
+import { requestAccessFineLocation } from '../../utils/permissions-android';
 
 export function Home({ navigation }) {
   const { isConnected, scanDevices, disconnectDevice } = useBLE();
@@ -14,8 +15,7 @@ export function Home({ navigation }) {
     }
   }, [isConnected]);
 
-
-  function navigateToControlPanel() {
+  async function navigateToControlPanel() {
 
     navigation.navigate('control-panel');
     try {
@@ -26,13 +26,17 @@ export function Home({ navigation }) {
         type: 'info'
       });
 
-      setTimeout(async () => {
-        await scanDevices();
-      }, 1000)
+      const permission = await requestAccessFineLocation()
+      
+      if (permission) {
+        setTimeout(async () => {
+          await scanDevices();
+        }, 1000)
+      }
 
     } catch (error) {
       showMessage({
-        message: "Erro ao conectar com o dispositivo!",
+        message: error.message,
         duration: 3000,
         type: 'danger'
       });

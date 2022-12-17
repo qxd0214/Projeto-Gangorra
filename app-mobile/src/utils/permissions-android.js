@@ -1,3 +1,5 @@
+import { PermissionsAndroid } from 'react-native';
+
 export async function requestAccessFineLocation() {
   const granted = await PermissionsAndroid.request(
     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
