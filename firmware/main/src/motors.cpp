@@ -18,9 +18,9 @@
 
 #define X                               0.0425
 #define Ts                              0.05
-#define Ct                              2.3134
+#define Ct                              6.1053
 
-#define REF_ANGLE                       0.0
+#define REF_ANGLE                       -7.0
 #define MOTOR_LEFT                      12
 #define MOTOR_RIGHT                     13
 
@@ -50,7 +50,7 @@ void vInitMotors(void) {
      mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &motor_pwm_config);
      // vTaskDelay(3000/portTICK_PERIOD_MS);
      usleep(3000000);
-     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 40.0);
+     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 38.25);
      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 40.0);
      // ESP_LOGI("Frequency Motor_Left", "Using rev \"%u\"Hz", mcpwm_get_frequency(MCPWM_UNIT_0, MCPWM_TIMER_0));
      // ESP_LOGI("Duty Cycle Motor_Left", "%f %%", mcpwm_get_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A));
@@ -64,14 +64,15 @@ void vAdjustMotors(void) {
 
      if (angle > -14 && angle < 14) {
 
+          //fGetReferenceAngle();
           ERROR_CONTROL = REF_ANGLE - angle;
-          if(abs(ERROR_CONTROL) > 2) {
+          if(abs(ERROR_CONTROL) > 3.5) {
                ERROR_CONTROL = ERROR_CONTROL * ACCELEROMETER_DEGREES_TO_RADIAN;
                
                float OUT_CONTROL = ERROR_CONTROL * (fGetPidThermP() +fGetPidThermI()*(Ts/2)) + ERROR_CONTROL_PAST1 * (-fGetPidThermP()+fGetPidThermI()*(Ts/2)-2*fGetPidThermD()*(1/Ts)) + ERROR_CONTROL_PAST2 * (fGetPidThermD()*(1/Ts)) - OUT_CONTROL_PAST1 * (-1);
                float pwm = mcpwm_get_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
-               float out_control_ct = (OUT_CONTROL * Ct * 3.6)/10000;
-               // ESP_LOGI("OUT_PWM1", "%.2f", out_control_ct);
+               float out_control_ct = (OUT_CONTROL * Ct * 2.2)/10000;
+               ESP_LOGI("OUT_PWM1", "%.2f", out_control_ct);
                // if((REF_ANGLE - angle) < 0) {
                //      out_control_ct *= -1;
                // } else {
@@ -82,10 +83,10 @@ void vAdjustMotors(void) {
 
                //out_pwm = out_pwm * 0.3 + pwm;
                usleep(5000);
-               if((out > 32) && (out < 45)) {
+               if((out > 38) && (out < 45)) {
                     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, out);
-               } else if(out < 32) {
-                    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 32);
+               } else if(out < 38) {
+                    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 38);
                } else if(out > 45) {
                     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 44);
                } else {
@@ -95,6 +96,9 @@ void vAdjustMotors(void) {
                ERROR_CONTROL_PAST1 = ERROR_CONTROL;
                OUT_CONTROL_PAST2 = OUT_CONTROL_PAST1;
                OUT_CONTROL_PAST1 = OUT_CONTROL;
+               mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 38.5);
+          }else{
+               mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 40);
           }
 
      }
