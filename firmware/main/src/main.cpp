@@ -7,14 +7,12 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
-
-#include "esp_log.h"
-
 #include "bluetooth.hpp"
 #include "display.hpp"
 #include "motors.hpp"
 #include "sensors.hpp"
 #include "system.hpp"
+// #include "esp_log.h"
 
 // =============================================================================
 // GLOBAL VARIABLES
@@ -96,6 +94,7 @@ static void vTaskDisplay(void *pvParameters) {
                     break;
             }
         }
+        
         /*
         printf("\033[H\033[J");
         printf("REFERENCE: %f\n", fGetReferenceAngle());
@@ -105,6 +104,7 @@ static void vTaskDisplay(void *pvParameters) {
         printf("I: %f\n", fGetPidThermI());
         printf("D: %f\n", fGetPidThermD());
         */
+
         vEraseDisplayCells(0, 11, 15);
         vSetDisplayCursor(0, 11);
 
@@ -135,6 +135,5 @@ void vTasksInit(void) {
 
 void vSystemInit(void) {
     vComponentsInit();
-    vStartupScreen();
     vTasksInit();
 }

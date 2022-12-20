@@ -1,6 +1,8 @@
 #ifndef SETTINGS_HPP
 #define SETTINGS_HPP
 
+#include "led.hpp"
+
 typedef enum {
      ACCELEROMETER_SENSOR,
      ULTRASONIC_SENSOR
@@ -38,8 +40,6 @@ extern bool bCheckModeUpdate(void);
 
 extern void vComponentsInit(void);
 
-extern void vStartupScreen(void);
-
 extern float fGetReferenceAngle(void);
 
 extern float fGetPidThermP(void);
@@ -52,6 +52,8 @@ extern Sensor xGetCurrentSensor(void);
 
 extern Mode xGetCurrentMode(void);
 
+extern LedColor vGetLedColor(void);
+
 extern void vSetReferenceAngle(float referenceAngle);
 
 extern void vSetPidThermP(float P);
@@ -63,5 +65,7 @@ extern void vSetPidThermD(float D);
 extern void vSetCurrentSensor(Sensor currentSensor);
 
 extern void vSetCurrentMode(Mode currentMode);
+
+extern void vSetLedColor(LedColor ledColor);
 
 #endif

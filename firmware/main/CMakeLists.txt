@@ -6,6 +6,7 @@ idf_component_register(
           "components/lcd/lcd.cpp" 
           "components/mpu6050/mpu6050.cpp" 
           "components/i2c/i2c.cpp" 
+          "components/led/led.cpp" 
           "src/system.cpp" 
           "src/display.cpp" 
           "src/bluetooth.cpp" 
@@ -19,6 +20,7 @@ idf_component_register(
           "components/ultrasonic" 
           "components/mpu6050" 
           "components/i2c" 
+          "components/led"
           "components/esp_idf_lib_helpers"
           "components/bluetooth_low_energy/" 
 )

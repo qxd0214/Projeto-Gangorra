@@ -1,8 +1,8 @@
 #include "motors.hpp"
 #include "driver/mcpwm.h"
 
-#include "esp_log.h"
-#include "esp_err.h"
+// #include "esp_log.h"
+// #include "esp_err.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -52,17 +52,15 @@ void vInitMotors(void) {
      usleep(3000000);
      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 40.0);
      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 40.0);
-     /*
-     ESP_LOGI("Frequency Motor_Left", "Using rev \"%u\"Hz", mcpwm_get_frequency(MCPWM_UNIT_0, MCPWM_TIMER_0));
-     ESP_LOGI("Duty Cycle Motor_Left", "%f %%", mcpwm_get_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A));
-     ESP_LOGI("Duty Cycle Motor_Right", "%f %%", mcpwm_get_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B));
-     */
+     // ESP_LOGI("Frequency Motor_Left", "Using rev \"%u\"Hz", mcpwm_get_frequency(MCPWM_UNIT_0, MCPWM_TIMER_0));
+     // ESP_LOGI("Duty Cycle Motor_Left", "%f %%", mcpwm_get_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A));
+     // ESP_LOGI("Duty Cycle Motor_Right", "%f %%", mcpwm_get_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B));
 }
 
 void vAdjustMotors(void) {
 
      float angle = fGetCurrentAngle();
-     ESP_LOGI("Angle", "%.2f", angle);
+     // ESP_LOGI("Angle", "%.2f", angle);
 
      if (angle > -14 && angle < 14) {
 
@@ -73,14 +71,14 @@ void vAdjustMotors(void) {
                float OUT_CONTROL = ERROR_CONTROL * (fGetPidThermP() +fGetPidThermI()*(Ts/2)) + ERROR_CONTROL_PAST1 * (-fGetPidThermP()+fGetPidThermI()*(Ts/2)-2*fGetPidThermD()*(1/Ts)) + ERROR_CONTROL_PAST2 * (fGetPidThermD()*(1/Ts)) - OUT_CONTROL_PAST1 * (-1);
                float pwm = mcpwm_get_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
                float out_control_ct = (OUT_CONTROL * Ct * 3.6)/10000;
-               ESP_LOGI("OUT_PWM1", "%.2f", out_control_ct);
+               // ESP_LOGI("OUT_PWM1", "%.2f", out_control_ct);
                // if((REF_ANGLE - angle) < 0) {
                //      out_control_ct *= -1;
                // } else {
                //      out_control_ct *= 1;
                // }
                float out = out_control_ct * 0.3 + pwm;
-               ESP_LOGI("OUT_PWM2", "%.2f", out);
+               // ESP_LOGI("OUT_PWM2", "%.2f", out);
 
                //out_pwm = out_pwm * 0.3 + pwm;
                usleep(5000);

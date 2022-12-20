@@ -1143,9 +1143,11 @@ static void gatts_profile_mode_control_event_handler(esp_gatts_cb_event_t event,
                     break;
                case 2:
                     vSetCurrentMode(FREE_MODE);
+                    vSetLedColor(kLED_COLOR_BLUE);
                     break;
                case 3:
                     vSetCurrentMode(DEFAULT_MODE);
+                    vSetLedColor(kLED_COLOR_GREEN);
                     break;
                }
                ESP_LOGI("MODE TAG", "GATT_WRITE_EVT, value len %d, value :", param->write.len);
@@ -1278,6 +1280,7 @@ static void gatts_profile_mode_control_event_handler(esp_gatts_cb_event_t event,
      case ESP_GATTS_DISCONNECT_EVT:
           vSetCurrentMode(SYSTEM_DEFAULT_MODE);
           vSetCurrentSensor(SYSTEM_DEFAULT_SENSOR);
+          vSetLedColor(kLED_COLOR_GREEN);
           ESP_LOGI("MODE TAG", "ESP_GATTS_DISCONNECT_EVT, disconnect reason 0x%x", param->disconnect.reason);
           esp_ble_gap_start_advertising(&adv_params);
           break;

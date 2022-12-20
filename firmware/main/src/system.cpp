@@ -9,16 +9,15 @@
 #include "bluetooth.hpp"
 #include "delay.hpp"
 
+static LedRgb systemLed = LedRgb(GPIO_NUM_5, GPIO_NUM_15, GPIO_NUM_18);
 static SystemSettings currentSettings;
 static bool modeUpdate;
 
-bool bCheckModeUpdate(void) {
-     bool currentModeUpdate = modeUpdate;
-     modeUpdate = false;
-     return currentModeUpdate;
-}
+// =============================================================================
+// PRIVATE FUNCTIONS
+// =============================================================================
 
-void vComponentsInit(void) {
+static void vInitSystemSettings(void) {
      currentSettings = {
           .pid = {
                .P = SYSTEM_DEFAULT_P,
@@ -30,14 +29,9 @@ void vComponentsInit(void) {
           .currentSensor = SYSTEM_DEFAULT_SENSOR
      };
      modeUpdate = true;
-     vInitAccelerometerSensor();
-     vInitUltrasonicSensor();
-     vInitMotors();
-     vInitBluetooth();
-     vInitDisplay();
 }
 
-void vStartupScreen(void) {
+static void vStartupScreen(void) {
      vClearDisplay();
      vSetDisplayCursor(0, 0);
      vDisplayWriteString("Balanco Didatico");
@@ -59,6 +53,27 @@ void vStartupScreen(void) {
      vSetDisplayCursor(1, 8);
      vDisplayWriteChar('1');
      vDelayMs(1000);
+}
+
+// =============================================================================
+// PUBLIC FUNCTIONS
+// =============================================================================
+
+bool bCheckModeUpdate(void) {
+     bool currentModeUpdate = modeUpdate;
+     modeUpdate = false;
+     return currentModeUpdate;
+}
+
+void vComponentsInit(void) {
+     vInitSystemSettings();
+     vInitAccelerometerSensor();
+     vInitUltrasonicSensor();
+     vInitBluetooth();
+     vInitDisplay();
+     vStartupScreen();
+     vInitMotors();
+     vSetLedColor(kLED_COLOR_GREEN);
 }
 
 // =============================================================================
@@ -99,6 +114,10 @@ void vSetCurrentMode(Mode currentMode) {
      modeUpdate = true;
 }
 
+void vSetLedColor(LedColor ledColor){ 
+     systemLed.setColor(ledColor);
+}
+
 // =============================================================================
 // GETTERS
 // =============================================================================
@@ -125,4 +144,8 @@ Sensor xGetCurrentSensor(void) {
 
 Mode xGetCurrentMode(void) {
      return currentSettings.currentMode;
+}
+
+LedColor vGetLedColor(void) {
+     return systemLed.getColor();
 }
