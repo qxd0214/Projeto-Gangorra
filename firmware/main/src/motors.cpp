@@ -58,21 +58,30 @@ void vInitMotors(void) {
 }
 
 void vAdjustMotors(void) {
+     
+     printf("\033[H\033[J");
+     printf("REFERENCE: %f\n", fGetReferenceAngle());
+     printf("SENSOR: %d\n", xGetCurrentSensor());
+     printf("MODE: %d\n", xGetCurrentMode());
+     printf("P: %f\n", fGetPidThermP());
+     printf("I: %f\n", fGetPidThermI());
+     printf("D: %f\n", fGetPidThermD());
 
      float angle = fGetCurrentAngle();
      // ESP_LOGI("Angle", "%.2f", angle);
 
-     if (angle > -14 && angle < 14) {
+     if (angle > SYSTEM_ANGLE_LOWER_LIMIT && angle < SYSTEM_ANGLE_UPPER_LIMIT) {
 
           //fGetReferenceAngle();
-          ERROR_CONTROL = REF_ANGLE - angle;
-          if(abs(ERROR_CONTROL) > 3.5) {
+          ERROR_CONTROL = fGetReferenceAngle() - angle;
+          if (abs(ERROR_CONTROL) > 3.5) {
+
                ERROR_CONTROL = ERROR_CONTROL * ACCELEROMETER_DEGREES_TO_RADIAN;
-               
-               float OUT_CONTROL = ERROR_CONTROL * (fGetPidThermP() +fGetPidThermI()*(Ts/2)) + ERROR_CONTROL_PAST1 * (-fGetPidThermP()+fGetPidThermI()*(Ts/2)-2*fGetPidThermD()*(1/Ts)) + ERROR_CONTROL_PAST2 * (fGetPidThermD()*(1/Ts)) - OUT_CONTROL_PAST1 * (-1);
+
+               float OUT_CONTROL = ERROR_CONTROL * (fGetPidThermP() + fGetPidThermI() * (Ts / 2)) + ERROR_CONTROL_PAST1 * (-fGetPidThermP() + fGetPidThermI() * (Ts / 2) - 2 * fGetPidThermD() * (1 / Ts)) + ERROR_CONTROL_PAST2 * (fGetPidThermD() * (1 / Ts)) - OUT_CONTROL_PAST1 * (-1);
                float pwm = mcpwm_get_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
-               float out_control_ct = (OUT_CONTROL * Ct * 2.2)/10000;
-               ESP_LOGI("OUT_PWM1", "%.2f", out_control_ct);
+               float out_control_ct = (OUT_CONTROL * Ct * 2.2) / 10000;
+               // ESP_LOGI("OUT_PWM1", "%.2f", out_control_ct);
                // if((REF_ANGLE - angle) < 0) {
                //      out_control_ct *= -1;
                // } else {
@@ -83,13 +92,16 @@ void vAdjustMotors(void) {
 
                //out_pwm = out_pwm * 0.3 + pwm;
                usleep(5000);
-               if((out > 38) && (out < 45)) {
+               if ((out > 38) && (out < 45)) {
                     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, out);
-               } else if(out < 38) {
+               }
+               else if (out < 38) {
                     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 38);
-               } else if(out > 45) {
+               }
+               else if (out > 45) {
                     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 44);
-               } else {
+               }
+               else {
                     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 40);
                }
 
@@ -97,7 +109,8 @@ void vAdjustMotors(void) {
                OUT_CONTROL_PAST2 = OUT_CONTROL_PAST1;
                OUT_CONTROL_PAST1 = OUT_CONTROL;
                mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 38.5);
-          }else{
+          }
+          else {
                mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 40);
           }
 

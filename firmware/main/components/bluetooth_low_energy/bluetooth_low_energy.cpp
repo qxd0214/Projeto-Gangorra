@@ -1147,6 +1147,10 @@ static void gatts_profile_mode_control_event_handler(esp_gatts_cb_event_t event,
                     break;
                case 3:
                     vSetCurrentMode(DEFAULT_MODE);
+                    vSetReferenceAngle(SYSTEM_DEFAULT_ANGLE);
+                    vSetPidThermP(SYSTEM_DEFAULT_P);
+                    vSetPidThermI(SYSTEM_DEFAULT_I);
+                    vSetPidThermD(SYSTEM_DEFAULT_D);
                     vSetLedColor(kLED_COLOR_GREEN);
                     break;
                }

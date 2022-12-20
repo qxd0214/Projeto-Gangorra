@@ -36,7 +36,7 @@ static void vStartupScreen(void) {
      vSetDisplayCursor(0, 0);
      vDisplayWriteString("Balanco Didatico");
      vSetDisplayCursor(1, 6);
-     vDisplayWriteString("v0.2");
+     vDisplayWriteString("v1.0.1");
      vDelayMs(2000);
 
      vClearDisplay();
